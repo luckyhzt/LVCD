@@ -1,6 +1,6 @@
 # *LVCD:* Reference-based Lineart Video Colorization with Diffusion Models
 
-### ACM Transactions on graphics & SIGGRAPH Asia 2024
+## ACM Transactions on graphics & SIGGRAPH Asia 2024
 
 [Project page](https://luckyhzt.github.io/lvcd) | [arXiv](https://arxiv.org/abs/2409.12960)
 

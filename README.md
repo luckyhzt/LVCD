@@ -4,7 +4,7 @@
 
 [Project page](https://luckyhzt.github.io/lvcd) | [arXiv](https://arxiv.org/abs/2409.12960)
 
-Zhitong Huang $^1$, [Nanxuan Zhao](http://nxzhao.com/) $^2$, [Jing Liao](https://scholars.cityu.edu.hk/en/persons/jing-liao(45757c38-f737-420d-8a7f-73b58d30c1fd).html) $^{1*}$
+Zhitong Huang $^1$, Mohan Zhang $^2$, [Jing Liao](https://scholars.cityu.edu.hk/en/persons/jing-liao(45757c38-f737-420d-8a7f-73b58d30c1fd).html) $^{1*}$
 
 <font size="1"> $^1$: City University of Hong Kong, Hong Kong SAR, China &nbsp;&nbsp; $^2$: WeChat, Tencent Inc., Shenzhen, China </font> \
 <font size="1"> $^*$: Corresponding author </font>

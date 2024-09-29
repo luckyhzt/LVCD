@@ -1,0 +1,250 @@
+model:
+  base_learning_rate: 5.0e-5
+  target: models.csvd.VideoDiffusionEngine
+  params:
+    scale_factor: 0.18215
+    disable_first_stage_autocast: True
+    ckpt_path: checkpoints/svd.safetensors
+    control_model_path: Null
+    init_from_unet: True
+    sd_locked: False
+    drop_first_stage_model: True
+
+    denoiser_config: 
+      target: sgm.modules.diffusionmodules.denoiser.Denoiser
+      params: 
+        scaling_config: 
+          target: sgm.modules.diffusionmodules.denoiser_scaling.VScalingWithEDMcNoise
+
+    network_config:
+      target: models.csvd.ControlledVideoUNet
+      params:
+        adm_in_channels: 768
+        num_classes: sequential
+        use_checkpoint: True
+        in_channels: 8
+        out_channels: 4
+        model_channels: 320
+        attention_resolutions: [4, 2, 1]
+        num_res_blocks: 2
+        channel_mult: [1, 2, 4, 4]
+        num_head_channels: 64
+        use_linear_in_transformer: True
+        transformer_depth: 1
+        context_dim: 1024
+        spatial_transformer_attn_type: softmax-xformers
+        extra_ff_mix_layer: True
+        use_spatial_context: True
+        merge_strategy: learned_with_images
+        video_kernel_size: [3, 1, 1]
+        temporal_attn_type: models.layers.TemporalAttention_Masked
+        spatial_self_attn_type: models.layers.ReferenceAttention
+        conv3d_type: models.layers.Conv3d_Masked
+        trainable_layers: ['TemporalAttention_Masked', 'ReferenceAttention']
+
+    controlnet_config:
+      target: models.csvd.ControlNet
+      params:
+        adm_in_channels: 768
+        num_classes: sequential
+        use_checkpoint: True
+        in_channels: 8
+        model_channels: 320
+        hint_channels: 3
+        attention_resolutions: [4, 2, 1]
+        num_res_blocks: 2
+        channel_mult: [1, 2, 4, 4]
+        num_head_channels: 64
+        use_linear_in_transformer: True
+        transformer_depth: 1
+        context_dim: 1024
+        spatial_transformer_attn_type: softmax-xformers
+        extra_ff_mix_layer: True
+        use_spatial_context: True
+        merge_strategy: learned_with_images
+        video_kernel_size: [3, 1, 1]
+        temporal_attn_type: models.layers.TemporalAttention_Masked
+        spatial_self_attn_type: models.layers.ReferenceAttention
+        conv3d_type: models.layers.Conv3d_Masked
+
+    conditioner_config:
+      target: sgm.modules.GeneralConditioner
+      params:
+        emb_models:
+        - is_trainable: False
+          input_key: cond_frames_without_noise
+          target: sgm.modules.encoders.modules.FrozenOpenCLIPImagePredictionEmbedder
+          params:
+            n_cond_frames: 1
+            n_copies: 1
+            open_clip_embedding_config:
+              target: sgm.modules.encoders.modules.FrozenOpenCLIPImageEmbedder
+              params:
+                freeze: True
+                #init_device : may need to set it
+
+        - input_key: fps_id
+          is_trainable: False
+          target: sgm.modules.encoders.modules.ConcatTimestepEmbedderND
+          params:
+            outdim: 256
+
+        - input_key: motion_bucket_id
+          is_trainable: False
+          target: sgm.modules.encoders.modules.ConcatTimestepEmbedderND
+          params:
+            outdim: 256
+
+        - input_key: cond_frames
+          is_trainable: False
+          target: sgm.modules.encoders.modules.VideoPredictionEmbedderWithEncoder
+          params:
+            disable_encoder_autocast: True
+            n_cond_frames: 1
+            n_copies: 1
+            is_ae: True
+            encoder_config:
+              target: sgm.models.autoencoder.AutoencoderKLModeOnly
+              params:
+                embed_dim: 4
+                monitor: val/rec_loss
+                ddconfig:
+                  attn_type: vanilla-xformers
+                  double_z: True
+                  z_channels: 4
+                  resolution: 256
+                  in_channels: 3
+                  out_ch: 3
+                  ch: 128
+                  ch_mult: [1, 2, 4, 4]
+                  num_res_blocks: 2
+                  attn_resolutions: []
+                  dropout: 0.0
+                lossconfig:
+                  target: torch.nn.Identity
+
+        - input_key: cond_aug
+          is_trainable: False
+          target: sgm.modules.encoders.modules.ConcatTimestepEmbedderND
+          params:
+            outdim: 256
+
+    first_stage_config:
+      target: sgm.models.autoencoder.AutoencodingEngine
+      params:
+        loss_config:
+          target: torch.nn.Identity
+        regularizer_config:
+          target: sgm.modules.autoencoding.regularizers.DiagonalGaussianRegularizer
+        encoder_config: 
+          target: sgm.modules.diffusionmodules.model.Encoder
+          params:
+            attn_type: vanilla
+            double_z: True
+            z_channels: 4
+            resolution: 256
+            in_channels: 3
+            out_ch: 3
+            ch: 128
+            ch_mult: [1, 2, 4, 4]
+            num_res_blocks: 2
+            attn_resolutions: []
+            dropout: 0.0
+        decoder_config:
+          target: sgm.modules.autoencoding.temporal_ae.VideoDecoder
+          params:
+            attn_type: vanilla
+            double_z: True
+            z_channels: 4
+            resolution: 256
+            in_channels: 3
+            out_ch: 3
+            ch: 128
+            ch_mult: [1, 2, 4, 4]
+            num_res_blocks: 2
+            attn_resolutions: []
+            dropout: 0.0
+            video_kernel_size: [3, 1, 1]
+
+    sampler_config:
+      target: sgm.modules.diffusionmodules.sampling.EulerEDMSampler
+      params:
+        num_steps: 25
+
+        discretization_config:
+          target: sgm.modules.diffusionmodules.discretizer.EDMDiscretization
+          params:
+            sigma_max: 700.0
+
+        guider_config:
+          target: sgm.modules.diffusionmodules.guiders.LinearPredictionGuider
+          params:
+            num_frames: 14
+            max_scale: 2.5
+            min_scale: 1.0
+            additional_cond_keys: ['control_hint']
+
+    loss_fn_config:
+      target: sgm.modules.diffusionmodules.loss.StandardDiffusionLoss
+      params:
+        batch2model_keys: ['num_video_frames', 'image_only_indicator']
+        additional_cond_keys: ['control_hint', 'crossattn_scale', 'concat_scale']
+
+        loss_weighting_config:
+          target: sgm.modules.diffusionmodules.loss_weighting.EDMWeighting
+          params:
+            sigma_data: 1.0
+
+        sigma_sampler_config:
+          target: sgm.modules.diffusionmodules.sigma_sampling.EDMSampling
+          params:
+            p_mean: 1.0
+            p_std: 1.6
+
+
+lightning:
+  modelcheckpoint:
+    params:
+      every_n_train_steps: 1500
+      save_last: False
+      save_top_k: -1
+      filename: '{epoch:04d}-{global_step:06.0f}'
+  
+  strategy:
+    params:
+      process_group_backend: gloo
+
+  trainer:
+    devices: 4,5,6,7,
+    benchmark: True
+    num_sanity_val_steps: 0
+    accumulate_grad_batches: 4
+    max_epochs: 100
+    precision: 16-mixed
+
+
+data:
+  target: sgm.data.my_dataset.DataModuleFromConfig
+  params:
+    batch_size: 2
+    num_workers: 16
+
+    train:
+      target: models.dataset.AnimeVideoDataset
+      params:
+        data_root: /data0/zhitong/datasets/animation_dataset
+        size: [320, 576]
+        motion_bucket_id: 160
+        fps_id: 6
+        num_frames: 15
+        cond_aug: False
+        nframe_range: [15, 200]
+        uncond_prob: 0.0
+        sketch_type: 'draw'
+        train_clips: 'train_clips_hist'
+        missing_controls: Null
+        sample_stride: 1
+
+
+
+

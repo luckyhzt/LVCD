@@ -30,3 +30,10 @@ pip3 install -r requirements/pt2.txt
 
 # Inference
 All the code for inference is placed under `./inference/`, where the jupyter notebook `sample.ipynb` demonstrates how to sample the videos. Two testing clips are also provided.
+
+# Training
+## Dataset preparation
+Download the training set from [here](https://huggingface.co/datasets/luckyhzt/Animation_video) including the `.zip`, `.z01` to `.z07`, and `train_clips_hist.json` files.
+
+Unzip the zip files and put the json file under the root directory of the dataset as `.../Animation_video/train_clips.hist.json`.
+

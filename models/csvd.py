@@ -957,6 +957,7 @@ class VideoDiffusionEngine(DiffusionEngine):
         x.requires_grad_(True)
         if x.shape[1] == 3:
             x = self.encode_first_stage(x)
+            x.requires_grad_(True)
         batch["global_step"] = self.global_step
         loss, loss_dict = self(x, batch)
         return loss, loss_dict

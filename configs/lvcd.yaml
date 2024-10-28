@@ -215,7 +215,7 @@ lightning:
       process_group_backend: gloo
 
   trainer:
-    devices: 4,5,6,7,
+    devices: 4,
     benchmark: True
     num_sanity_val_steps: 0
     accumulate_grad_batches: 4
@@ -232,7 +232,7 @@ data:
     train:
       target: models.dataset.AnimeVideoDataset
       params:
-        data_root: /data0/zhitong/datasets/animation_dataset
+        data_root: /data1/zhitong/datasets/Animation_video
         size: [320, 576]
         motion_bucket_id: 160
         fps_id: 6

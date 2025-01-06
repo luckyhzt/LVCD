@@ -37,3 +37,12 @@ Download the training set from [here](https://huggingface.co/datasets/luckyhzt/A
 
 Unzip the zip files and put the json file under the root directory of the dataset as `.../Animation_video/train_clips_hist.json`.
 
+Run `data_preprocess/encode_latents.py` to encode all frames into VAE-encoded latents. The script is written in multi-process program and you can change the variable `devices` to enable multi-GPU.
+
+After encoding the latents, `.pt` files will be stored in the dataset directory.
+
+Then you can train the model with:
+```
+python main.py --train --base configs/lvcd.yaml
+```
+

@@ -35,5 +35,5 @@ All the code for inference is placed under `./inference/`, where the jupyter not
 ## Dataset preparation
 Download the training set from [here](https://huggingface.co/datasets/luckyhzt/Animation_video) including the `.zip`, `.z01` to `.z07`, and `train_clips_hist.json` files.
 
-Unzip the zip files and put the json file under the root directory of the dataset as `.../Animation_video/train_clips.hist.json`.
+Unzip the zip files and put the json file under the root directory of the dataset as `.../Animation_video/train_clips_hist.json`.
 

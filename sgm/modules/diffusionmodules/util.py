@@ -370,7 +370,6 @@ class AlphaBlender(nn.Module):
         image_only_indicator: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         alpha = self.get_alpha(image_only_indicator)
-        a = 0
         x = (
             alpha.to(x_spatial.dtype) * x_spatial
             + (1.0 - alpha).to(x_spatial.dtype) * x_temporal

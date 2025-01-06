@@ -88,12 +88,12 @@ if __name__ == '__main__':
 
     resolution = [320, 576]
     img_dirs = [
-        f'#path_to_unzipped_dataset/Animation_video/img_320/WhisperOfTheHeart',
-        f'#path_to_unzipped_dataset/Animation_video/img_320/TheWindRises',
-        f'#path_to_unzipped_dataset/Animation_video/img_320/TheSecretWorldOfArriey',
-        f'#path_to_unzipped_dataset/Animation_video/img_320/Ponyo',
-        f'#path_to_unzipped_dataset/Animation_video/img_320/MyNeighborTotoro',
-        f'#path_to_unzipped_dataset/Animation_video/img_320/KikisDeliveryService',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/WhisperOfTheHeart',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/TheWindRises',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/TheSecretWorldOfArriey',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/Ponyo',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/MyNeighborTotoro',
+        f'#path_to_unzipped_dataset/Animation_video/img_{resolution[0]}/KikisDeliveryService',
         ]
     devices = ['cuda:0']
 

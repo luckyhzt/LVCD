@@ -41,6 +41,7 @@ Run `data_preprocess/encode_latents.py` to encode all frames into VAE-encoded la
 
 After encoding the latents, `.pt` files will be stored in the dataset directory.
 
+## Run training
 Then you can train the model with:
 ```
 python main.py --train --base configs/lvcd.yaml
